@@ -1,138 +1,204 @@
-const startButton = document.getElementById("start-button");
-
-const openingScreen = document.getElementById("opening-screen");
-const gardenScreen = document.getElementById("garden-screen");
-
-const canvas = document.getElementById("garden");
-const ctx = canvas.getContext("2d");
+const startButton =
+document.getElementById("start-button");
 
 
-function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+const openingScreen =
+document.getElementById("opening-screen");
+
+
+const gardenScreen =
+document.getElementById("garden-screen");
+
+
+const message =
+document.getElementById("message");
+
+
+const canvas =
+document.getElementById("garden");
+
+
+const ctx =
+canvas.getContext("2d");
+
+
+
+function resizeCanvas(){
+
+    canvas.width =
+    window.innerWidth;
+
+    canvas.height =
+    window.innerHeight;
+
 }
+
 
 resizeCanvas();
 
-window.addEventListener("resize", resizeCanvas);
 
-
-
-startButton.addEventListener("click", function () {
-
-    openingScreen.classList.add("hidden");
-
-    gardenScreen.classList.remove("hidden");
-
-    startBouquet();
-
-});
+window.addEventListener(
+"resize",
+resizeCanvas
+);
 
 
 
 const hibiscusColors = [
-    "#ff6b35",
-    "#ff8fab",
-    "#ff4d6d",
-    "#fff1dc"
+
+"#ff6b35",
+"#ff82cb",
+"#ff4d6d",
+"#fff1dc"
+
 ];
 
 
 
 
 
-function startBouquet() {
-
-    ctx.clearRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
+startButton.onclick = function(){
 
 
-    const centerX =
-        canvas.width / 2;
+    openingScreen.classList.add("hidden");
 
 
-    const bottomY =
-        canvas.height * .93;
+    gardenScreen.classList.remove("hidden");
 
 
-    const flowers = 13;
+    startBouquet();
+
+
+};
 
 
 
-    for(
-        let i = 0;
-        i < flowers;
-        i++
-    ){
-
-
-        let spread =
-            (i / (flowers - 1)) - .5;
 
 
 
-        let curve =
-            spread *
-            (
-                280 +
-                Math.random() * 100
-            );
+
+function startBouquet(){
+
+
+ctx.clearRect(
+0,
+0,
+canvas.width,
+canvas.height
+);
 
 
 
-        let height =
-            280 +
-            Math.random() * 190;
+const centerX =
+canvas.width / 2;
+
+
+const bottomY =
+canvas.height * .92;
 
 
 
-        let size =
-            22 +
-            Math.random() * 15;
+let branches = [];
 
 
 
-        let color =
-            hibiscusColors[
-                Math.floor(
-                    Math.random()
-                    *
-                    hibiscusColors.length
-                )
-            ];
+const amount = 13;
 
 
 
-        // different branches finish at different times
+for(
+let i=0;
+i<amount;
+i++
+){
 
-        let startDelay =
-            i * 250 +
-            Math.random()*700;
+
+let spread =
+(i/(amount-1))-.5;
 
 
 
-        setTimeout(
-            function(){
+branches.push({
 
-                growCurvedStem(
-                    centerX,
-                    bottomY,
-                    curve,
-                    height,
-                    size,
-                    color,
-                    0
-                );
+curve:
+spread *
+(
+300+
+Math.random()*180
+),
 
-            },
-            startDelay
-        );
 
-    }
+height:
+300+
+Math.random()*230,
+
+
+size:
+25+
+Math.random()*18,
+
+
+color:
+hibiscusColors[
+Math.floor(
+Math.random()
+*
+hibiscusColors.length
+)
+]
+
+});
+
+
+}
+
+
+
+
+branches.sort(
+()=>Math.random()-0.5
+);
+
+
+
+branches.forEach(
+(branch,index)=>{
+
+
+setTimeout(()=>{
+
+
+growStem(
+
+centerX,
+bottomY,
+branch.curve,
+branch.height,
+branch.size,
+branch.color,
+0
+
+);
+
+
+
+},index*450+Math.random()*700);
+
+
+
+});
+
+
+
+setTimeout(()=>{
+
+
+message.classList.remove("hidden");
+
+
+},8000);
+
+
 
 }
 
@@ -144,189 +210,160 @@ function startBouquet() {
 
 
 
-function growCurvedStem(
-    startX,
-    startY,
-    curve,
-    height,
-    size,
-    color,
-    progress
+function growStem(
+startX,
+startY,
+curve,
+height,
+size,
+color,
+progress
 ){
 
 
-    if(progress >= 1){
 
+if(progress>=1){
 
-        setTimeout(
-            function(){
 
-                drawHibiscus(
-                    startX + curve,
-                    startY - height,
-                    size,
-                    color
-                );
+setTimeout(()=>{
 
-            },
 
-            500 +
-            Math.random()*2200
+drawHibiscus(
 
-        );
+startX+curve,
+startY-height,
+size,
+color
 
+);
 
-        return;
 
-    }
 
+},200+Math.random()*200);
 
 
 
+return;
 
-    let t =
-        progress;
+}
 
 
 
-    let x =
-        startX
-        +
-        curve *
-        (
-            .25*t +
-            .75*Math.pow(t,1.5)
-        );
 
 
 
-    let y =
-        startY
-        -
-        height*t;
 
+let t=progress;
 
 
 
+let x =
+startX+
+curve*
+(
+.2*t+
+.8*Math.pow(t,1.5)
+);
 
-    let oldT =
-        Math.max(
-            0,
-            t-.025
-        );
 
 
+let y =
+startY-height*t;
 
-    let oldX =
-        startX
-        +
-        curve *
-        (
-            .25*oldT +
-            .75*Math.pow(oldT,1.5)
-        );
 
 
+let oldT =
+Math.max(0,t-.02);
 
-    let oldY =
-        startY
-        -
-        height*oldT;
 
 
+let oldX =
+startX+
+curve*
+(
+.2*oldT+
+.8*Math.pow(oldT,1.5)
+);
 
 
 
-    // fewer smaller leaves
+let oldY =
+startY-height*oldT;
 
-    if(
-        Math.random() > .985
-    ){
 
-        drawLeaf(
-            x,
-            y,
-            curve
-        );
 
-    }
 
 
+drawStem(
+oldX,
+oldY,
+x,
+y
+);
 
 
 
-    // stem first
 
-    drawStem(
-        oldX,
-        oldY,
-        x,
-        y
-    );
 
+if(
+progress>.3 &&
+progress<.85 &&
+Math.random()>.997
+){
 
+drawLeaf(
+x,
+y,
+curve
+);
 
+}
 
 
-    // small blooms on top of branches
 
-    if(
-        progress > .68 &&
-        Math.random() > .994
-    ){
 
 
-        let smallSize =
-            size *
-            (
-                .25 +
-                Math.random()*.15
-            );
+if(
+progress>.7 &&
+Math.random()>.997
+){
 
 
+drawHibiscus(
 
-        let smallColor =
-            hibiscusColors[
-                Math.floor(
-                    Math.random()
-                    *
-                    hibiscusColors.length
-                )
-            ];
+x,
+y-12,
+size*.32,
+color
 
+);
 
 
-        drawHibiscus(
-            x,
-            y,
-            smallSize,
-            smallColor
-        );
+}
 
 
-    }
 
 
 
 
+requestAnimationFrame(()=>{
 
 
+growStem(
 
-    requestAnimationFrame(
-        function(){
+startX,
+startY,
+curve,
+height,
+size,
+color,
+progress+.004
 
-            growCurvedStem(
-                startX,
-                startY,
-                curve,
-                height,
-                size,
-                color,
-                progress + .005
-            );
+);
 
-        }
-    );
+
+});
+
 
 
 }
@@ -340,39 +377,42 @@ function growCurvedStem(
 
 
 function drawStem(
-    x1,
-    y1,
-    x2,
-    y2
+x1,
+y1,
+x2,
+y2
 ){
 
-    ctx.beginPath();
 
-    ctx.moveTo(
-        x1,
-        y1
-    );
+ctx.beginPath();
 
 
-    ctx.lineTo(
-        x2,
-        y2
-    );
+ctx.moveTo(
+x1,
+y1
+);
 
 
-    ctx.strokeStyle =
-        "#276b38";
+ctx.lineTo(
+x2,
+y2
+);
 
 
-    ctx.lineWidth =
-        5;
+ctx.strokeStyle =
+"#245b32";
 
 
-    ctx.lineCap =
-        "round";
+ctx.lineWidth =
+5;
 
 
-    ctx.stroke();
+ctx.lineCap =
+"round";
+
+
+ctx.stroke();
+
 
 }
 
@@ -385,55 +425,54 @@ function drawStem(
 
 
 function drawLeaf(
-    x,
-    y,
-    curve
+x,
+y,
+curve
 ){
 
-    ctx.save();
+
+ctx.save();
 
 
-    ctx.translate(
-        x,
-        y
-    );
-
-
-    ctx.rotate(
-        curve > 0 ? .7 : -.7
-    );
-
-
-    ctx.beginPath();
-
-
-    ctx.ellipse(
-        0,
-        0,
-        4,
-        9,
-        0,
-        0,
-        Math.PI*2
-    );
+ctx.translate(
+x,
+y
+);
 
 
 
-    ctx.fillStyle =
-        "#438f45";
+ctx.rotate(
+curve>0?.7:-.7
+);
 
 
 
-    ctx.globalAlpha =
-        .85;
+ctx.beginPath();
 
 
 
-    ctx.fill();
+ctx.ellipse(
+0,
+0,
+3,
+7,
+0,
+0,
+Math.PI*2
+);
 
 
 
-    ctx.restore();
+ctx.fillStyle =
+"#3d8038";
+
+
+ctx.fill();
+
+
+
+ctx.restore();
+
 
 }
 
@@ -446,103 +485,98 @@ function drawLeaf(
 
 
 function drawHibiscus(
-    x,
-    y,
-    size,
-    color
+x,
+y,
+size,
+color
 ){
 
-    ctx.save();
 
 
-    ctx.translate(
-        x,
-        y
-    );
-
-
-    ctx.rotate(
-        Math.random()
-        *
-        Math.PI*2
-    );
+ctx.save();
 
 
 
-    for(
-        let i = 0;
-        i < 5;
-        i++
-    ){
-
-        ctx.save();
-
-
-        ctx.rotate(
-            i*Math.PI*2/5
-        );
+ctx.translate(
+x,
+y
+);
 
 
 
-        ctx.beginPath();
+for(
+let i=0;
+i<5;
+i++
+){
 
 
-        ctx.ellipse(
-            0,
-            -size*.55,
-            size*.45,
-            size,
-            0,
-            0,
-            Math.PI*2
-        );
+ctx.save();
+
+
+ctx.rotate(
+i*Math.PI*2/5
+);
 
 
 
-        ctx.fillStyle =
-            color;
+ctx.beginPath();
 
 
-        ctx.globalAlpha =
-            .92;
+ctx.ellipse(
+
+0,
+-size*.55,
+size*.42,
+size,
+0,
+0,
+Math.PI*2
+
+);
 
 
-        ctx.fill();
+
+ctx.fillStyle =
+color;
 
 
-        ctx.restore();
+ctx.fill();
 
-    }
 
+
+ctx.restore();
+
+
+
+}
 
 
 
 
-    ctx.globalAlpha = 1;
+ctx.beginPath();
+
+
+ctx.arc(
+0,
+0,
+size*.23,
+0,
+Math.PI*2
+);
 
 
 
-    ctx.beginPath();
+ctx.fillStyle =
+"#ffd166";
 
 
-    ctx.arc(
-        0,
-        0,
-        size*.25,
-        0,
-        Math.PI*2
-    );
+ctx.fill();
 
 
 
-    ctx.fillStyle =
-        "#ffd166";
+ctx.restore();
 
 
-    ctx.fill();
-
-
-
-    ctx.restore();
 
 }
