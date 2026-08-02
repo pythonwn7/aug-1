@@ -40,6 +40,7 @@ const hibiscusColors = [
 
 
 
+
 function startBouquet() {
 
     ctx.clearRect(
@@ -58,7 +59,6 @@ function startBouquet() {
         canvas.height * .93;
 
 
-
     const flowers = 13;
 
 
@@ -70,30 +70,29 @@ function startBouquet() {
     ){
 
 
-
         let spread =
-            (i / (flowers-1)) - .5;
+            (i / (flowers - 1)) - .5;
 
 
 
         let curve =
             spread *
             (
-                260 +
-                Math.random()*90
+                280 +
+                Math.random() * 100
             );
 
 
 
         let height =
-            260 +
-            Math.random()*180;
+            280 +
+            Math.random() * 190;
 
 
 
         let size =
             22 +
-            Math.random()*16;
+            Math.random() * 15;
 
 
 
@@ -108,19 +107,36 @@ function startBouquet() {
 
 
 
-        growCurvedStem(
-            centerX,
-            bottomY,
-            curve,
-            height,
-            size,
-            color,
-            0
+        // different branches finish at different times
+
+        let startDelay =
+            i * 250 +
+            Math.random()*700;
+
+
+
+        setTimeout(
+            function(){
+
+                growCurvedStem(
+                    centerX,
+                    bottomY,
+                    curve,
+                    height,
+                    size,
+                    color,
+                    0
+                );
+
+            },
+            startDelay
         );
 
     }
 
 }
+
+
 
 
 
@@ -141,16 +157,30 @@ function growCurvedStem(
 
     if(progress >= 1){
 
-        drawHibiscus(
-            startX + curve,
-            startY - height,
-            size,
-            color
+
+        setTimeout(
+            function(){
+
+                drawHibiscus(
+                    startX + curve,
+                    startY - height,
+                    size,
+                    color
+                );
+
+            },
+
+            500 +
+            Math.random()*2200
+
         );
+
 
         return;
 
     }
+
+
 
 
 
@@ -177,6 +207,8 @@ function growCurvedStem(
 
 
 
+
+
     let oldT =
         Math.max(
             0,
@@ -190,7 +222,7 @@ function growCurvedStem(
         +
         curve *
         (
-            .25*oldT+
+            .25*oldT +
             .75*Math.pow(oldT,1.5)
         );
 
@@ -203,36 +235,57 @@ function growCurvedStem(
 
 
 
-    // leaves growing behind stems
+
+
+    // fewer smaller leaves
 
     if(
-        Math.random() > .96
+        Math.random() > .985
     ){
+
         drawLeaf(
             x,
             y,
             curve
         );
+
     }
 
 
 
-    // smaller blooms near upper branches
+
+
+    // stem first
+
+    drawStem(
+        oldX,
+        oldY,
+        x,
+        y
+    );
+
+
+
+
+
+    // small blooms on top of branches
 
     if(
-        progress > .65 &&
-        Math.random() > .985
+        progress > .68 &&
+        Math.random() > .994
     ){
 
-        let bloomSize =
+
+        let smallSize =
             size *
             (
-                .35 +
-                Math.random() * .25
+                .25 +
+                Math.random()*.15
             );
 
 
-        let bloomColor =
+
+        let smallColor =
             hibiscusColors[
                 Math.floor(
                     Math.random()
@@ -242,23 +295,20 @@ function growCurvedStem(
             ];
 
 
+
         drawHibiscus(
-            x + (Math.random()*30-15),
-            y + (Math.random()*20-10),
-            bloomSize,
-            bloomColor
+            x,
+            y,
+            smallSize,
+            smallColor
         );
+
 
     }
 
 
 
-    drawStem(
-        oldX,
-        oldY,
-        x,
-        y
-    );
+
 
 
 
@@ -272,7 +322,7 @@ function growCurvedStem(
                 height,
                 size,
                 color,
-                progress + .006
+                progress + .005
             );
 
         }
@@ -280,6 +330,9 @@ function growCurvedStem(
 
 
 }
+
+
+
 
 
 
@@ -328,6 +381,9 @@ function drawStem(
 
 
 
+
+
+
 function drawLeaf(
     x,
     y,
@@ -354,28 +410,34 @@ function drawLeaf(
     ctx.ellipse(
         0,
         0,
-        5,
-        13,
+        4,
+        9,
         0,
         0,
         Math.PI*2
     );
 
 
+
     ctx.fillStyle =
         "#438f45";
 
 
+
     ctx.globalAlpha =
-        .9;
+        .85;
+
 
 
     ctx.fill();
 
 
+
     ctx.restore();
 
 }
+
+
 
 
 
@@ -408,8 +470,8 @@ function drawHibiscus(
 
 
     for(
-        let i=0;
-        i<5;
+        let i = 0;
+        i < 5;
         i++
     ){
 
@@ -419,6 +481,7 @@ function drawHibiscus(
         ctx.rotate(
             i*Math.PI*2/5
         );
+
 
 
         ctx.beginPath();
@@ -433,6 +496,7 @@ function drawHibiscus(
             0,
             Math.PI*2
         );
+
 
 
         ctx.fillStyle =
@@ -453,7 +517,9 @@ function drawHibiscus(
 
 
 
+
     ctx.globalAlpha = 1;
+
 
 
     ctx.beginPath();
@@ -466,6 +532,7 @@ function drawHibiscus(
         0,
         Math.PI*2
     );
+
 
 
     ctx.fillStyle =
