@@ -12,9 +12,12 @@ canvas.height = window.innerHeight;
 
 
 window.addEventListener("resize", function () {
+
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+
 });
+
 
 
 startButton.addEventListener("click", function () {
@@ -29,6 +32,13 @@ startButton.addEventListener("click", function () {
 
 
 
+
+// Store flower positions so they don't overlap
+
+let flowers = [];
+
+
+
 function startGarden() {
 
     ctx.clearRect(
@@ -39,16 +49,36 @@ function startGarden() {
     );
 
 
-    const plants = 6;
+    flowers = [];
 
 
-    for (let i = 0; i < plants; i++) {
+    const plantCount = 7;
+
+
+    const spacing =
+        canvas.width / plantCount;
+
+
+
+    for (let i = 0; i < plantCount; i++) {
+
+
+        let x =
+            spacing * i + spacing / 2;
+
+
+        // slight randomness but controlled
+
+        x += Math.random() * 40 - 20;
+
+
 
         growPlant(
-            Math.random() * canvas.width,
+            x,
             canvas.height,
-            -Math.PI / 2 + (Math.random() - 0.5) * 0.4,
-            120 + Math.random() * 60
+            -Math.PI / 2 + (Math.random() - 0.5) * 0.25,
+            130 + Math.random() * 80,
+            0
         );
 
     }
@@ -58,66 +88,172 @@ function startGarden() {
 
 
 
-function growPlant(x, y, angle, length) {
+function growPlant(
+    x,
+    y,
+    angle,
+    length,
+    depth
+) {
 
 
-    if (length < 25) {
+    if (length < 25 || depth > 3) {
 
-        drawFlower(x, y);
+
+        createFlower(
+            x,
+            y
+        );
+
 
         return;
 
     }
 
 
-    const endX =
+
+    let endX =
         x + Math.cos(angle) * length;
 
 
-    const endY =
+    let endY =
         y + Math.sin(angle) * length;
 
 
 
-    animateLine(
+    drawBranch(
         x,
         y,
         endX,
-        endY,
-        function () {
-
-
-            // sometimes add a leaf
-            if (Math.random() > 0.5) {
-                drawLeaf(endX, endY, angle);
-            }
+        endY
+    );
 
 
 
-            const branches =
-                Math.random() > 0.45 ? 2 : 1;
+
+    let branches = 1;
+
+
+    if (Math.random() > 0.45) {
+
+        branches = 2;
+
+    }
 
 
 
-            for (
-                let i = 0;
-                i < branches;
-                i++
-            ) {
+    for (
+        let i = 0;
+        i < branches;
+        i++
+    ) {
 
 
-                growPlant(
-                    endX,
-                    endY,
-                    angle + (Math.random() - 0.5) * 0.5,
-                    length * 0.65
-                );
+        growPlant(
+
+            endX,
+            endY,
+
+            angle +
+            (Math.random() - 0.5) * 0.35,
+
+            length * 0.65,
+
+            depth + 1
+
+        );
+
+    }
 
 
-            }
+}
 
+
+
+
+
+function drawBranch(
+    x1,
+    y1,
+    x2,
+    y2
+) {
+
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        x1,
+        y1
+    );
+
+
+    ctx.lineTo(
+        x2,
+        y2
+    );
+
+
+    ctx.strokeStyle =
+        "#285943";
+
+
+    ctx.lineWidth = 3;
+
+
+    ctx.stroke();
+
+}
+
+
+
+
+
+function createFlower(
+    x,
+    y
+) {
+
+
+    // prevent overlapping flowers
+
+    for (let flower of flowers) {
+
+
+        let distance =
+            Math.hypot(
+                flower.x - x,
+                flower.y - y
+            );
+
+
+        if (distance < 55) {
+
+            return;
 
         }
+
+    }
+
+
+
+    flowers.push({
+
+        x:x,
+
+        y:y,
+
+        size:
+            12 + Math.random() * 12
+
+    });
+
+
+
+    drawFlower(
+        x,
+        y,
+        flowers[flowers.length - 1].size
     );
 
 }
@@ -125,120 +261,97 @@ function growPlant(x, y, angle, length) {
 
 
 
-function animateLine(
-    x1,
-    y1,
-    x2,
-    y2,
-    callback
+
+function drawFlower(
+    x,
+    y,
+    size
 ) {
 
 
-    let progress = 0;
-
-
-    function draw() {
-
-
-        progress += 0.025;
-
-
-        ctx.beginPath();
-
-        ctx.moveTo(
-            x1,
-            y1
-        );
-
-
-        ctx.lineTo(
-            x1 + (x2 - x1) * progress,
-            y1 + (y2 - y1) * progress
-        );
-
-
-        ctx.strokeStyle = "#285943";
-
-        ctx.lineWidth = 3;
-
-        ctx.stroke();
-
-
-
-        if (progress < 1) {
-
-            requestAnimationFrame(draw);
-
-        } else {
-
-            callback();
-
-        }
-
-    }
-
-
-    draw();
-
-}
-
-
-
-
-function drawFlower(x, y) {
-
-
     const colors = [
-        "#ff6b6b", // red
-        "#ff8c42", // orange
-        "#ffb3c6", // pink
-        "#fff5e1"  // white
+
+        "#ff6b6b",
+        "#ff8c42",
+        "#ffb3c6",
+        "#fff5e1"
+
     ];
+
 
 
     const color =
         colors[
-            Math.floor(Math.random() * colors.length)
+            Math.floor(
+                Math.random()
+                *
+                colors.length
+            )
         ];
 
 
 
-    const petals = 5;
+    for (
+        let i = 0;
+        i < 5;
+        i++
+    ) {
+
+
+        let angle =
+            (Math.PI * 2 / 5)
+            *
+            i;
 
 
 
-    for (let i = 0; i < petals; i++) {
+        let px =
+            x +
+            Math.cos(angle)
+            *
+            size
+            *
+            0.5;
 
 
-        const angle =
-            (Math.PI * 2 / petals) * i;
 
-
-
-        const px =
-            x + Math.cos(angle) * 9;
-
-
-        const py =
-            y + Math.sin(angle) * 9;
+        let py =
+            y +
+            Math.sin(angle)
+            *
+            size
+            *
+            0.5;
 
 
 
         ctx.beginPath();
 
 
+
         ctx.ellipse(
+
             px,
+
             py,
-            10,
-            18,
+
+            size * 0.45,
+
+            size,
+
             angle,
+
             0,
+
             Math.PI * 2
+
         );
 
 
-        ctx.fillStyle = color;
+
+        ctx.fillStyle =
+            color;
+
 
         ctx.fill();
 
@@ -246,63 +359,28 @@ function drawFlower(x, y) {
 
 
 
-    // flower center
-
     ctx.beginPath();
+
 
     ctx.arc(
+
         x,
+
         y,
-        5,
+
+        size * 0.25,
+
         0,
+
         Math.PI * 2
+
     );
 
 
-    ctx.fillStyle = "#ffd166";
+    ctx.fillStyle =
+        "#ffd166";
+
 
     ctx.fill();
-
-}
-
-
-
-
-function drawLeaf(x, y, angle) {
-
-
-    ctx.save();
-
-
-    ctx.translate(
-        x,
-        y
-    );
-
-
-    ctx.rotate(angle);
-
-
-
-    ctx.beginPath();
-
-
-    ctx.ellipse(
-        0,
-        0,
-        6,
-        14,
-        0,
-        0,
-        Math.PI * 2
-    );
-
-
-    ctx.fillStyle = "#4f8f52";
-
-    ctx.fill();
-
-
-    ctx.restore();
 
 }
