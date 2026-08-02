@@ -76,8 +76,6 @@ function startBouquet() {
 
 
 
-        // wider bouquet
-
         let curve =
             spread *
             (
@@ -86,8 +84,6 @@ function startBouquet() {
             );
 
 
-
-        // different heights prevent stacking
 
         let height =
             260 +
@@ -207,7 +203,7 @@ function growCurvedStem(
 
 
 
-    // draw leaves first so stems cover them
+    // leaves growing behind stems
 
     if(
         Math.random() > .96
@@ -217,6 +213,42 @@ function growCurvedStem(
             y,
             curve
         );
+    }
+
+
+
+    // smaller blooms near upper branches
+
+    if(
+        progress > .65 &&
+        Math.random() > .985
+    ){
+
+        let bloomSize =
+            size *
+            (
+                .35 +
+                Math.random() * .25
+            );
+
+
+        let bloomColor =
+            hibiscusColors[
+                Math.floor(
+                    Math.random()
+                    *
+                    hibiscusColors.length
+                )
+            ];
+
+
+        drawHibiscus(
+            x + (Math.random()*30-15),
+            y + (Math.random()*20-10),
+            bloomSize,
+            bloomColor
+        );
+
     }
 
 
@@ -240,7 +272,7 @@ function growCurvedStem(
                 height,
                 size,
                 color,
-                progress+.012
+                progress + .006
             );
 
         }
@@ -318,8 +350,6 @@ function drawLeaf(
 
     ctx.beginPath();
 
-
-    // smaller uniform leaves
 
     ctx.ellipse(
         0,

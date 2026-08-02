@@ -5,9 +5,9 @@
 body {
     background: linear-gradient(
         to bottom,
-        #87ceeb 0%,
-        #c8efff 45%,
-        #65a765 100%
+        #96e1ff 0%,
+        #53a593 45%,
+        #215f21 100%
     );
 
     overflow: hidden;
